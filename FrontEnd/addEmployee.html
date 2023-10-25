@@ -65,7 +65,7 @@
                         const li = document.createElement("li");
                         li.className = "list-group-item";
                         li.innerHTML = `${employee.employeeName} - ${employee.employeeEmail} - ${employee.employeePhoneNumber} - ${employee.employeeSalary}
-                            <button class="btn btn-danger delete" data-id="${employee.employeeId}">Delete</button>
+                            <button id="deleteEmployee" class="btn btn-danger delete" data-id="${employee.employeeId}">Delete</button>
                             <button class="btn btn-info edit" data-id="${employee.employeeId}">Edit</button>`;
                         employeeList.appendChild(li);
                     });
@@ -149,6 +149,32 @@
             alert("Error creating employee: " + error);
         });
     });
+       //Event Listener to Delete Employee
+    document.getElementById("deleteEmployee").addEventListener("click", () => {
+            //Delete request to "/employeeId/{employeeId}"
+            fetch(`${baseUrl}/employee/employeeId/{employeeId}`,{
+                method: "DELETE"
+            })
+            .then(response => {
+                if(!response.ok) {
+                    console.error(`Request failed with status: ${response.status}`);
+                    throw new Error(`Request failed with status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data=> {
+                if(data.errors){
+                displayValidationErrors(data.errors);
+            } else{
+                displayValidationErrors({});
+                fetchEmployees();
+                alert("Employee created successfully");
+            }
+        })
+        .catch(error => {
+            console.error("Error creating employee:" +error);
+            alert("Error creating employee: " + error);
+        });
         // Fetch employees when the page loads
         fetchEmployees();
     </script>
