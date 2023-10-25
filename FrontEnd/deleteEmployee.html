@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Employee Management</title>
+</head>
+<body>
+    <h2>Search and Delete Employee</h2>
+
+    <form id="searchForm" class="mb-3">
+        <div class="form-group">
+            <label for="searchField">Search by Field:</label>
+            <select id="searchField" class="form-control">
+                <option value="employeeName">Employee Name</option>
+                <option value="employeeEmail">Employee Email</option>
+                <option value="employeePhoneNumber">Phone Number</option>
+                <option value="employeeSalary">Salary</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="searchValue">Search Value:</label>
+            <input type="text" class="form-control" id="searchValue" required>
+        </div>
+        <button type="button" id="searchEmployee" class="btn btn-primary">Search Employee</button>
+    </form>
+
+    <div id="searchResults" style="display: none;">
+        <h3>Search Results:</h3>
+        <ul id="employeeList" class="list-group"></ul>
+    </div>
+
+    <button type="button" id="deleteEmployee" class="btn btn-danger" style="display: none;">Delete Employee</button>
+
+    <script>
+        const baseUrl = "http://localhost:8080"; // Update the base URL as needed
+
+        // Function to search employees based on the selected field and value
+        function searchEmployees(field, value) {
+            fetch(`${baseUrl}/employee?${field}=${value}`)
+                .then(response => response.json())
+                .then(data => {
+                    const searchResults = document.getElementById("searchResults");
+                    searchResults.style.display = "block";
+                    const employeeList = document.getElementById("employeeList");
+                    employeeList.innerHTML = "";
+
+                    data.forEach(employee => {
+                        const li = document.createElement("li");
+                        li.className = "list-group-item";
+                        li.innerHTML = `ID: ${employee.employeeId} - Name: ${employee.employeeName} - Email: ${employee.employeeEmail} - Phone: ${employee.employeePhoneNumber} - Salary: ${employee.employeeSalary}`;
+                        employeeList.appendChild(li);
+                    });
+
+                    if (data.length > 0) {
+                        const deleteEmployee = document.getElementById("deleteEmployee");
+                        deleteEmployee.style.display = "block";
+                    }
+                })
+                .catch(error => {
+                    console.error("Error searching employees: " + error);
+                });
+        }
+
+        // Event listener for "Search Employee" button
+        document.getElementById("searchEmployee").addEventListener("click", () => {
+            const searchField = document.getElementById("searchField").value;
+            const searchValue = document.getElementById("searchValue").value;
+            searchEmployees(searchField, searchValue);
+        });
+
+        // Event listener for "Delete Employee" button
+        document.getElementById("deleteEmployee").addEventListener("click", () => {
+            // Implement code to delete the selected employee based on the displayed results
+            // You can send a DELETE request to the server to delete the employee
+            // Refresh the search results after deletion
+            // You can implement this based on your server's API.
+            alert("Employee deleted successfully"); // Display a confirmation message
+        });
+    </script>
+</body>
+</html>

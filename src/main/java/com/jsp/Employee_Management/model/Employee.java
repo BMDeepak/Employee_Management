@@ -24,7 +24,7 @@ public class Employee {
 	private String employeeEmail;
 	@NotNull(message="password cannot be Null")
 	@NotBlank
-	@Pattern(regexp = "(?=.*[0-9])+(?=.*[a-z])+(?=.*[A-Z])+(?=.*[@#$%^&+=])+(?=\\S+$).{8,}", message = "minimum 8 characters mandatory(1 upperCase,1 lowerCase,1 specialCharacter,1 number)")
+//	@Pattern(regexp = "(?=.*[0-9])+(?=.*[a-z])+(?=.*[A-Z])+(?=.*[@#$%^&+=])+(?=\\S+$).{8,}", message = "minimum 8 characters mandatory(1 upperCase,1 lowerCase,1 specialCharacter,1 number)")
 	private String employeePassword;
 	@Min(value = 6000000000l, message="Phone number cannot be less then 6000000000")
 	@Max(value = 9999999999l, message="Phone number cannot be less then 9999999999")

@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Employee Management</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container">
+        <h2>Employee Management</h2>
+
+        <!-- Add Employee Form -->
+        <form id="employeeForm" class="mb-3">
+            <input type="hidden" id="employeeId">
+            <div class="form-group">
+                <label for="employeeName">Name:</label>
+                <input type="text" class="form-control" id="employeeName" required>
+                <div id="nameError" class="text-danger"></div>
+            </div>
+            <div class="form-group">
+                <label for="employeeEmail">Email:</label>
+                <input type="email" class="form-control" id="employeeEmail" required>
+                <div id="emailError" class="text-danger"></div>
+            </div>
+            <div class="form-group">
+                <label for="employeePhoneNumber">Phone Number:</label>
+                <input type="number" class="form-control" id="employeePhoneNumber" required>
+                <div id="phoneNumberError" class="text-danger"></div>
+            </div>
+            <div class="form-group">
+                <label for="employeeSalary">Salary:</label>
+                <input type="number" class="form-control" id="employeeSalary" required>
+                <div id="salaryError" class="text-danger"></div>
+            </div>
+            <div class="form-group">
+                <label for="employeePassword">Password:</label>
+                <input type="password" class="form-control" id="employeePassword" required>
+                <div id="passwordError" class="text-danger"></div>
+            </div>
+            <button type="button" id="createEmployee" class="btn btn-primary">Create Employee</button>
+            <button type="button" id="updateEmployee" class="btn btn-success">Update Employee</button>
+            <button onclick="window.location.href=`deleteEmployee.html`" type="button" id="deleteEmployee" class="btn btn-success">Delete Employee</button>
+            <button type="button" id="cancelUpdate" class="btn btn-secondary">Cancel</button>
+        </form>
+
+        
+        <button type="button" id="showAllEmployees" class="btn btn-primary">Show Employee</button>
+        <!-- Employee List -->
+        <ul id="employeeList" class="list-group"></ul>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        const baseUrl = "http://localhost:8080"; // Update the base URL as needed
+
+        // Function to fetch and display employees
+        function fetchEmployees() {
+            fetch(`${baseUrl}/employee`)
+                .then(response => response.json())
+                .then(data => {
+                    const employeeList = document.getElementById("employeeList");
+                    employeeList.innerHTML = "";
+
+                    data.forEach(employee => {
+                        const li = document.createElement("li");
+                        li.className = "list-group-item";
+                        li.innerHTML = `${employee.employeeName} - ${employee.employeeEmail} - ${employee.employeePhoneNumber} - ${employee.employeeSalary}
+                            <button class="btn btn-danger delete" data-id="${employee.employeeId}">Delete</button>
+                            <button class="btn btn-info edit" data-id="${employee.employeeId}">Edit</button>`;
+                        employeeList.appendChild(li);
+                    });
+                })
+                .catch(error => {
+                    console.error("Error fetching employees: " + error);
+                });
+        }
+
+        // Function to display validation errors for each field
+        function displayValidationErrors(errors) {
+            const errorFields = ['name', 'email', 'phoneNumber', 'salary', 'password'];
+
+            // Clear any previous error messages
+            errorFields.forEach(field => {
+                document.getElementById(`${field}Error`).textContent = '';
+            });
+
+            // Log validation errors to the console
+            for (const field in errors) {
+                if (errorFields.includes(field)) {
+                    const errorMessage = errors[field];
+                    console.error(`Validation Error for ${field}: ${errorMessage}`);
+                    document.getElementById(`${field}Error`).textContent = errorMessage;
+                }
+            }
+        }
+            // Simulate validation errors for demonstration
+            const errors = {
+                name: "Name is required",
+                email: "Email is invalid",
+                phoneNumber: "Phone number is too short",
+                salary: "Salary is too low",
+                password: "Password is weak"
+            };
+
+            // Display validation errors locally
+            displayValidationErrors(errors);
+
+        // Event listener for "Show All Employees" button
+        document.getElementById("showAllEmployees").addEventListener("click", () => {
+            fetchEmployees(); // Call the fetchEmployees function to display all employees
+        });
+
+        // Event listener for "Create Employees" button
+        document.getElementById("createEmployee").addEventListener("click", () => {
+            const employeeData = {
+                employeeName: document.getElementById("employeeName").value,
+                employeeEmail: document.getElementById("employeeEmail").value,
+                employeePassword: document.getElementById("employeePassword").value,
+                employeePhoneNumber: document.getElementById("employeePhoneNumber").value,
+                employeeSalary: parseFloat(document.getElementById("employeeSalary").value), // Parse as a floating-point number
+            };
+
+            //Post request for Employee ${baseUrl}/employee
+            fetch(`${baseUrl}/employee`,{
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(employeeData)
+            })
+            .then(response => {
+                if(!response.ok) {
+                    console.error(`Request failed with status: ${response.status}`);
+                    throw new Error(`Request failed with status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data=> {
+                if(data.errors){
+                displayValidationErrors(data.errors);
+            } else{
+                displayValidationErrors({});
+                fetchEmployees();
+                alert("Employee created successfully");
+            }
+        })
+        .catch(error => {
+            console.error("Error creating employee:" +error);
+            alert("Error creating employee: " + error);
+        });
+    });
+        // Fetch employees when the page loads
+        fetchEmployees();
+    </script>
+</body>
+</html>
