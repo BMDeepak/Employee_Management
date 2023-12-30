@@ -25,7 +25,7 @@ import com.jsp.Employee_Management.util.ResponseStructure;
 import jakarta.validation.Valid;
 import jakarta.websocket.server.PathParam;
 
-
+@CrossOrigin(origins = "https://addEmployee")
 @RestController
 @RequestMapping("/employee")
 public class EmployeeController {
