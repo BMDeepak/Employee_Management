@@ -25,7 +25,12 @@ import com.jsp.Employee_Management.util.ResponseStructure;
 import jakarta.validation.Valid;
 import jakarta.websocket.server.PathParam;
 
-@CrossOrigin
+@CrossOrigin(origins = "https://demo-emplopyee-management.onrender.com",
+             methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE},
+             allowedHeaders = {"Authorization", "Content-Type"},
+             exposedHeaders = {"Authorization", "Custom-Header"},
+             allowCredentials = "true", 
+             maxAge = 3600)
 @RestController
 @RequestMapping("/employee")
 public class EmployeeController {
